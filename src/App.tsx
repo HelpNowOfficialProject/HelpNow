@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./components/Home/Home";
+import { ChakraProvider, ColorModeScript, extendTheme } from "@chakra-ui/react";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
+import WithAuth from "./components/WithAuth/WithAuth";
+import WithoutAuth from "./components/WithoutAuth/WithoutAuth";
+
+const theme = extendTheme({
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={"dark"} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="auth" element={<WithoutAuth />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
+          <Route path="*" element={<WithAuth />}>
+            <Route path="" element={<Home />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ChakraProvider>
   );
 }
 

@@ -41,6 +41,7 @@ export default function Register() {
         status: "error",
         isClosable: true,
       });
+      return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)

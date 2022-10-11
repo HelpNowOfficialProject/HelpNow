@@ -1,13 +1,15 @@
 import {
+  Box,
   Button,
   Input,
   InputGroup,
   InputRightElement,
   useToast,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
 export default function Register() {
@@ -110,7 +112,14 @@ export default function Register() {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button onClick={handleRegister}>Zarejestruj</Button>
+      <Button onClick={handleRegister} mt="20px">
+        Zarejestruj
+      </Button>
+      <Box mt="20px">
+        <ChakraLink>
+          <Link to="../login">Zaloguj się</Link>
+        </ChakraLink>
+      </Box>
     </div>
   );
 }

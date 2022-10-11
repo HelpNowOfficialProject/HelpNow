@@ -161,7 +161,10 @@ export default function AddHelpRequest() {
               onChange={handleVoluntaryChange}
             ></Switch>
           </Box>
-          <Button>Wyślij</Button>
+          <Box display="flex" justifyContent={"space-between"}>
+            <Button>Wyślij</Button>
+            <Button bgColor="red.600">Odrzuć</Button>
+          </Box>
         </FormControl>
       </Container>
     </>

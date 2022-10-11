@@ -1,13 +1,15 @@
 import {
+  Box,
   Button,
   Input,
   InputGroup,
   InputRightElement,
   useToast,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
 export default function Login() {
@@ -93,7 +95,14 @@ export default function Login() {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button onClick={handleLogin}>Zaloguj</Button>
+      <Button onClick={handleLogin} mt="20px">
+        Zaloguj
+      </Button>
+      <Box mt="20px">
+        <ChakraLink>
+          <Link to="../register">Zarejestruj się</Link>
+        </ChakraLink>
+      </Box>
     </div>
   );
 }

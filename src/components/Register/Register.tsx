@@ -36,7 +36,7 @@ export default function Register() {
     if (password !== passwordConfirm) {
       // TODO: A better alert, e.g. text under the input
       toast({
-        title: "Niepoprawne hasło",
+        title: "Niepoprawne hasło!",
         description: "Hasła muszą się zgadzać!",
         status: "error",
         isClosable: true,

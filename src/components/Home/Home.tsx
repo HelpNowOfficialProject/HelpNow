@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <Box>
       {/* <HelpList /> */}
-      <Link to="addPost">
+      <Link to="post/add">
         <Button>Dodaj post</Button>
       </Link>
       <LogOut />

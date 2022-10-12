@@ -8,6 +8,7 @@ import WithoutAuth from "./components/WithoutAuth/WithoutAuth";
 import AddHelpRequest from "./components/AddHelpRequest/AddHelpRequest";
 
 import "leaflet/dist/leaflet";
+import Post from "./components/Post/Post";
 
 const theme = extendTheme({
   initialColorMode: "dark",
@@ -26,7 +27,8 @@ function App() {
           </Route>
           <Route path="*" element={<WithAuth />}>
             <Route path="" element={<Home />} />
-            <Route path="addpost" element={<AddHelpRequest />} />
+            <Route path="post/add" element={<AddHelpRequest />} />
+            <Route path={`post/:id`} element={<Post />} />
           </Route>
         </Routes>
       </BrowserRouter>

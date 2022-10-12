@@ -24,11 +24,24 @@ import {
   Switch,
   Tooltip,
   Text,
+  useToast,
 } from "@chakra-ui/react";
+import { addDoc, collection } from "firebase/firestore";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth, db } from "../../firebase";
+import { IPost } from "../../types/post";
 
 //
 export default function AddHelpRequest() {
+  const toast = useToast();
+  const posts = collection(db, "posts");
+  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [tagError, setTagError] = useState("");
@@ -40,6 +53,16 @@ export default function AddHelpRequest() {
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentTag(e.target.value);
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setDescription(e.target.value);
   };
 
   const addTag = () => {
@@ -69,6 +92,35 @@ export default function AddHelpRequest() {
     setIsVoluntary(e.target.checked);
   };
 
+  const handlePostAdd = async () => {
+    // TODO: Add validation
+
+    const newPost: IPost = {
+      authorId: auth.currentUser?.uid as string,
+      title,
+      description,
+      address: {
+        // TODO: Fix it
+        latitude: 49.946357895803885,
+        longitude: 18.607068901955323,
+      },
+      tags,
+      dangerLevel: sliderValue,
+      isVoluntary,
+    };
+
+    await addDoc(posts, newPost);
+
+    toast({
+      title: "Sukces!",
+      description: "Pomyślnie utworzono",
+      status: "success",
+      isClosable: true,
+    });
+
+    navigate("/");
+  };
+
   return (
     <>
       <Container>
@@ -76,15 +128,24 @@ export default function AddHelpRequest() {
         <FormControl>
           <Box mb={`40px`}>
             <FormLabel>Tytuł</FormLabel>
-            <Input variant={`filled`}></Input>
+            <Input
+              variant={`filled`}
+              onChange={handleTitleChange}
+              value={title}
+            ></Input>
           </Box>
           <Box mb={`40px`}>
             <FormLabel>Opis</FormLabel>
-            <Textarea></Textarea>
+            <Textarea
+              onChange={handleDescriptionChange}
+              value={description}
+              variant={"filled"}
+            ></Textarea>
           </Box>
           <Box mb={`40px`}>
             <FormLabel>Adres</FormLabel>
             <Input variant={`filled`}></Input>
+            <Alert status="error">Tutaj nie dziala na razie</Alert>
             <FormHelperText>Format: miasto ulica numer</FormHelperText>
           </Box>
           <Box mb={`40px`}>
@@ -107,10 +168,19 @@ export default function AddHelpRequest() {
               mb={`10px`}
             ></Input>
             {tagError && (
-              <Alert status="error" borderRadius={`10px`} mb="10px">
-                <AlertIcon />
-                <AlertTitle>Nie można dodać nowego tagu!</AlertTitle>
-                <AlertDescription>{tagError}</AlertDescription>
+              <Alert
+                status="error"
+                borderRadius={`10px`}
+                mb="10px"
+                display={"flex"}
+              >
+                <Box display="flex">
+                  <AlertIcon />
+                </Box>
+                <Box>
+                  <AlertTitle>Nie można dodać nowego tagu!</AlertTitle>
+                  <AlertDescription>{tagError}</AlertDescription>
+                </Box>
               </Alert>
             )}
             <Button onClick={addTag}>Dodaj Tagi</Button>
@@ -162,8 +232,10 @@ export default function AddHelpRequest() {
             ></Switch>
           </Box>
           <Box display="flex" justifyContent={"space-between"}>
-            <Button>Wyślij</Button>
-            <Button bgColor="red.600">Odrzuć</Button>
+            <Button onClick={handlePostAdd}>Wyślij</Button>
+            <Link to="/">
+              <Button bgColor="red.600">Odrzuć</Button>
+            </Link>
           </Box>
         </FormControl>
       </Container>

@@ -2,8 +2,7 @@ export interface IPost {
   authorId: string; // Not for design
   title: string;
   description: string;
-  address: string;
-  addressData: ILocation; // Not for design
+  address: ILocation;
   tags: string[];
   dangerLevel: number; // 1 - 10
   isVoluntary: boolean;

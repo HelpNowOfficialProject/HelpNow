@@ -47,13 +47,14 @@ export default function Register() {
       errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
     }
 
-    if(errorMessage){
+    if (errorMessage) {
       toast({
         title: "Błędy podczas rejestracji",
         description: errorMessage,
         status: "error",
         isClosable: true,
-      }); return;
+      });
+      return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -131,4 +132,3 @@ export default function Register() {
     </div>
   );
 }
-

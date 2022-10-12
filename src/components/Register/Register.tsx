@@ -15,6 +15,7 @@ import { auth } from "../../firebase";
 export default function Register() {
   const toast = useToast();
   const navigate = useNavigate();
+  const emailValidation = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,15 +36,24 @@ export default function Register() {
   };
 
   const handleRegister = async () => {
+    let errorMessage = "";
     if (password !== passwordConfirm) {
-      // TODO: A better alert, e.g. text under the input
+      errorMessage = "Hasła muszą się zgadzać!";
+    } else if (!emailValidation.test(email)) {
+      errorMessage = "Niepoprawny e-mail";
+    } else if (!/\d/.test(password)) {
+      errorMessage = "Hasło powinno zawierać przynajmniej 1 liczbę!";
+    } else if (password.length < 6) {
+      errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
+    }
+
+    if(errorMessage){
       toast({
-        title: "Niepoprawne hasło!",
-        description: "Hasła muszą się zgadzać!",
+        title: "Błędy podczas rejestracji",
+        description: errorMessage,
         status: "error",
         isClosable: true,
-      });
-      return;
+      }); return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -53,9 +63,7 @@ export default function Register() {
       })
       .catch((err: any) => {
         let errorMessage = `Kod: ${err.code}; ${err.message}`;
-        if (err.code === "auth/invalid-email") {
-          errorMessage = "Niepoprawny e-mail";
-        } else if (err.code === "auth/email-already-in-use") {
+        if (err.code === "auth/email-already-in-use") {
           errorMessage = "Posiadasz już konto!";
         } else if (err.code === "auth/weak-password") {
           errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
@@ -123,3 +131,4 @@ export default function Register() {
     </div>
   );
 }
+

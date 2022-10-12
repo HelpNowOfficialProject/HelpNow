@@ -7,6 +7,8 @@ import WithAuth from "./components/WithAuth/WithAuth";
 import WithoutAuth from "./components/WithoutAuth/WithoutAuth";
 import AddHelpRequest from "./components/AddHelpRequest/AddHelpRequest";
 
+import "leaflet/dist/leaflet";
+
 const theme = extendTheme({
   initialColorMode: "dark",
   useSystemColorMode: false,

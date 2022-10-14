@@ -56,6 +56,8 @@ export default function AddHelpRequest() {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
 
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
@@ -149,26 +151,26 @@ export default function AddHelpRequest() {
   };
 
   const handlePostAdd = async () => {
-    let errorMessage = "";
     // TODO: Add tag validation
+    setTitleError("");
+    setDescriptionError("");
+
 
     if(!title){
-      errorMessage = "Brakuje tytułu!";
+      setTitleError("Brakuje tytułu!");
+      return;
     }
     else if(!description){
-      errorMessage = "Brakuje opisu!";
+      setDescriptionError("Brakuje Opisu!");
+      return;
+    }
+    else if(tags.length==0){
+      setTagError("Brakuje tagów!");
+      return;
     }
     else if(title[0].toUpperCase() === title[0]){
-      errorMessage = "Tytuł nie może zaczynać się od dużej litery!";
-    }
-
-    if(errorMessage){
-      toast({
-        title: "Błąd!",
-        description: errorMessage,
-        status: "error",
-        isClosable: true,
-      }); return;
+      setTitleError("Tytuł nie może zaczynać się od dużej litery!");
+      return;
     }
     setIsLoading(true);
 
@@ -226,6 +228,22 @@ export default function AddHelpRequest() {
               onChange={handleTitleChange}
               value={title}
             ></Input>
+            {titleError && (
+              <Alert
+                status="error"
+                borderRadius={`10px`}
+                mb="10px"
+                display={"flex"}
+              >
+                <Box display="flex">
+                  <AlertIcon />
+                </Box>
+                <Box>
+                  <AlertTitle>Nie można dodać tytułu!</AlertTitle>
+                  <AlertDescription>{titleError}</AlertDescription>
+                </Box>
+              </Alert>
+            )}
           </Box>
           <Box mb={`40px`}>
             <FormLabel>Opis</FormLabel>
@@ -234,6 +252,22 @@ export default function AddHelpRequest() {
               value={description}
               variant={"filled"}
             ></Textarea>
+             {descriptionError && (
+              <Alert
+                status="error"
+                borderRadius={`10px`}
+                mb="10px"
+                display={"flex"}
+              >
+                <Box display="flex">
+                  <AlertIcon />
+                </Box>
+                <Box>
+                  <AlertTitle>Nie można dodać opisu!</AlertTitle>
+                  <AlertDescription>{descriptionError}</AlertDescription>
+                </Box>
+              </Alert>
+            )}
           </Box>
           <Box mb="40px">
             <FormLabel>Adres</FormLabel>

@@ -44,6 +44,7 @@ export default function AddHelpRequest() {
   const toast = useToast();
   const posts = collection(db, "posts");
   const navigate = useNavigate();
+  const specialChar = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
   const [initialLocation, setInitialLocation] = useState<ILocation>({
     latitude: 49.946357895803885,
@@ -57,6 +58,8 @@ export default function AddHelpRequest() {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
 
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
@@ -110,17 +113,33 @@ export default function AddHelpRequest() {
 
   const addTag = () => {
     setTagError("");
+
+    let newTag =
+      currentTag[0].toUpperCase() + currentTag.slice(1).toLowerCase();
+
     if (!currentTag) {
       setTagError("Tag nie może być pusty!");
       return;
     }
+
+    //checks if the tag has spaces
+    else if (/\s/.test(newTag)) {
+      setTagError("Tag nie może mieć spacji!");
+      return;
+    }
+    //checks if the tag has special characters
+    else if (specialChar.test(newTag)) {
+      setTagError("Tag nie może mieć znaków specjalnych!");
+      return;
+    }
+
     // Check if the tag exists already
-    if (tags.find((e) => e === currentTag)) {
+    if (tags.find((e) => e === newTag)) {
       setTagError("Tag musi być unikatowy!");
       return;
     }
     setTags((prev: string[]) => {
-      return [...prev, currentTag];
+      return [...prev, newTag];
     });
     setCurrentTag("");
   };
@@ -140,8 +159,30 @@ export default function AddHelpRequest() {
   };
 
   const handlePostAdd = async () => {
-    // TODO: Add validation
+    let errorMessage = "";
+    setTitleError("");
+    setDescriptionError("");
 
+    if (!title) {
+      setTitleError("Brakuje tytułu!");
+      return;
+    } else if (!description) {
+      setDescriptionError("Brakuje Opisu!");
+      return;
+    } else if (tags.length === 0) {
+      setTagError("Brakuje tagów!");
+      return;
+    }
+
+    if (errorMessage) {
+      toast({
+        title: "Błąd!",
+        description: errorMessage,
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
     setIsLoading(true);
 
     const newPost: IPost = {
@@ -200,6 +241,22 @@ export default function AddHelpRequest() {
               onChange={handleTitleChange}
               value={title}
             ></Input>
+            {titleError && (
+              <Alert
+                status="error"
+                borderRadius={`10px`}
+                mb="10px"
+                display={"flex"}
+              >
+                <Box display="flex">
+                  <AlertIcon />
+                </Box>
+                <Box>
+                  <AlertTitle>Nie można dodać tytułu!</AlertTitle>
+                  <AlertDescription>{titleError}</AlertDescription>
+                </Box>
+              </Alert>
+            )}
           </Box>
           <Box mb={`40px`}>
             <FormLabel>Opis</FormLabel>
@@ -208,6 +265,22 @@ export default function AddHelpRequest() {
               value={description}
               variant={"filled"}
             ></Textarea>
+            {descriptionError && (
+              <Alert
+                status="error"
+                borderRadius={`10px`}
+                mb="10px"
+                display={"flex"}
+              >
+                <Box display="flex">
+                  <AlertIcon />
+                </Box>
+                <Box>
+                  <AlertTitle>Nie można dodać opisu!</AlertTitle>
+                  <AlertDescription>{descriptionError}</AlertDescription>
+                </Box>
+              </Alert>
+            )}
           </Box>
           <Box mb="40px">
             <FormLabel>Adres</FormLabel>

@@ -1,21 +1,26 @@
 import {
+  Box,
   Button,
   Input,
   InputGroup,
   InputRightElement,
   useToast,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
 export default function Register() {
   const toast = useToast();
   const navigate = useNavigate();
+  const emailValidation = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -31,16 +36,32 @@ export default function Register() {
   ) => {
     setPasswordConfirm(e.target.value);
   };
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+  };
+  const handleSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSurname(e.target.value)
+  };
 
   const handleRegister = async () => {
+    let errorMessage = "";
     if (password !== passwordConfirm) {
-      // TODO: A better alert, e.g. text under the input
+      errorMessage = "Hasła muszą się zgadzać!";
+    } else if (!emailValidation.test(email)) {
+      errorMessage = "Niepoprawny e-mail";
+    } else if (!/\d/.test(password)) {
+      errorMessage = "Hasło powinno zawierać przynajmniej 1 liczbę!";
+    } else if (password.length < 6) {
+      errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
+    }
+
+    if(errorMessage){
       toast({
-        title: "Niepoprawne hasło",
-        description: "Hasła muszą się zgadzać!",
+        title: "Błędy podczas rejestracji",
+        description: errorMessage,
         status: "error",
         isClosable: true,
-      });
+      }); return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -50,9 +71,7 @@ export default function Register() {
       })
       .catch((err: any) => {
         let errorMessage = `Kod: ${err.code}; ${err.message}`;
-        if (err.code === "auth/invalid-email") {
-          errorMessage = "Niepoprawny e-mail";
-        } else if (err.code === "auth/email-already-in-use") {
+        if (err.code === "auth/email-already-in-use") {
           errorMessage = "Posiadasz już konto!";
         } else if (err.code === "auth/weak-password") {
           errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
@@ -68,6 +87,18 @@ export default function Register() {
 
   return (
     <div>
+      <Input
+        placeholder="Imię"
+        value={name}
+        onChange={handleNameChange}
+      />
+
+      <Input
+        placeholder="Nazwisko"
+        value={surname}
+        onChange={handleSurnameChange}
+      />
+
       <Input
         placeholder="E-mail"
         value={email}
@@ -109,7 +140,15 @@ export default function Register() {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button onClick={handleRegister}>Zarejestruj</Button>
+      <Button onClick={handleRegister} mt="20px">
+        Zarejestruj
+      </Button>
+      <Box mt="20px">
+        <ChakraLink>
+          <Link to="../login">Zaloguj się</Link>
+        </ChakraLink>
+      </Box>
     </div>
   );
 }
+

@@ -19,6 +19,9 @@ export default function Register() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  //const [address, setAddress] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -34,6 +37,12 @@ export default function Register() {
   ) => {
     setPasswordConfirm(e.target.value);
   };
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+  };
+  const handleSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSurname(e.target.value)
+  };
 
   const handleRegister = async () => {
     let errorMessage = "";
@@ -47,14 +56,13 @@ export default function Register() {
       errorMessage = "Za słabe hasło! (Powinno mieć przynajmniej 6 znaków)";
     }
 
-    if (errorMessage) {
+    if(errorMessage){
       toast({
         title: "Błędy podczas rejestracji",
         description: errorMessage,
         status: "error",
         isClosable: true,
-      });
-      return;
+      }); return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -80,6 +88,18 @@ export default function Register() {
 
   return (
     <div>
+      <Input
+        placeholder="Imię"
+        value={name}
+        onChange={handleNameChange}
+      />
+
+      <Input
+        placeholder="Nazwisko"
+        value={surname}
+        onChange={handleSurnameChange}
+      />
+
       <Input
         placeholder="E-mail"
         value={email}
@@ -132,3 +152,4 @@ export default function Register() {
     </div>
   );
 }
+

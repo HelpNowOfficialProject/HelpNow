@@ -7,7 +7,6 @@ import {
   Textarea,
   FormControl,
   FormLabel,
-  FormHelperText,
   Box,
   Tag,
   TagCloseButton,
@@ -26,17 +25,32 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { addDoc, collection } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
-import { IPost } from "../../types/post";
+import { ILocation, IPost } from "../../types/post";
+import LoadingPage from "../LoadingPage/LoadingPage";
+import MapComponent from "../MapComponent/MapComponent";
+
+import styles from "./AddHelpRequest.module.css";
 
 //
 export default function AddHelpRequest() {
   const toast = useToast();
   const posts = collection(db, "posts");
   const navigate = useNavigate();
+
+  const [initialLocation, setInitialLocation] = useState<ILocation>({
+    latitude: 49.946357895803885,
+    longitude: 18.607068901955323,
+  });
+  const [markerPosition, setMarkerPosition] = useState<ILocation>({
+    latitude: 49.946357895803885,
+    longitude: 18.607068901955323,
+  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
@@ -57,6 +71,33 @@ export default function AddHelpRequest() {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
+  };
+
+  const handleMarkerPosition = (newLocation: ILocation) => {
+    setMarkerPosition(newLocation);
+  };
+
+  const locateMe = async () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMarkerPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (_) => {
+        getIPLocation().then((location) => {
+          setMarkerPosition(location);
+        });
+        toast({
+          title: "Ostrzeżenie",
+          description:
+            "Nie udało się pobrać lokalizacji! Próbuję jeszcze raz...",
+          status: "warning",
+          isClosable: true,
+        });
+      }
+    );
   };
 
   const handleDescriptionChange = (
@@ -95,6 +136,8 @@ export default function AddHelpRequest() {
   const handlePostAdd = async () => {
     // TODO: Add validation
 
+    setIsLoading(true);
+
     const newPost: IPost = {
       authorId: auth.currentUser?.uid as string,
       title,
@@ -111,6 +154,8 @@ export default function AddHelpRequest() {
 
     await addDoc(posts, newPost);
 
+    setIsLoading(false);
+
     toast({
       title: "Sukces!",
       description: "Pomyślnie utworzono",
@@ -121,10 +166,24 @@ export default function AddHelpRequest() {
     navigate("/");
   };
 
+  const getIPLocation = async () => {
+    const { data } = await axios.get("http://ipwho.is/");
+    return { latitude: data.latitude, longitude: data.longitude };
+  };
+
+  useEffect(() => {
+    getIPLocation().then((location) => {
+      setMarkerPosition(location);
+    });
+    locateMe();
+  }, []);
+
+  if (isLoading) return <LoadingPage />;
+
   return (
     <>
-      <Container>
-        <Text fontSize="4xl">Dodaj post o pomoc</Text>
+      <Container mb="20px">
+        <Text fontSize="4xl">Dodaj prośbę o pomoc</Text>
         <FormControl>
           <Box mb={`40px`}>
             <FormLabel>Tytuł</FormLabel>
@@ -142,12 +201,31 @@ export default function AddHelpRequest() {
               variant={"filled"}
             ></Textarea>
           </Box>
-          <Box mb={`40px`}>
+          <Box mb="40px">
             <FormLabel>Adres</FormLabel>
-            <Input variant={`filled`}></Input>
+            {/* <Input variant={`filled`}></Input>
             <Alert status="error">Tutaj nie dziala na razie</Alert>
-            <FormHelperText>Format: miasto ulica numer</FormHelperText>
+            <FormHelperText>Format: miasto ulica numer</FormHelperText> */}
+            <div className={styles.map}>
+              <MapContainer
+                // @ts-ignore
+                center={[initialLocation.latitude, initialLocation.longitude]}
+                zoom={13}
+                scrollWheelZoom={true}
+                style={{
+                  height: "100%",
+                }}
+              >
+                <MapComponent
+                  markerPosition={markerPosition}
+                  handleMarkerPosition={handleMarkerPosition}
+                />
+              </MapContainer>
+            </div>
+
+            <Button onClick={locateMe}>Zlokalizuj mnie!</Button>
           </Box>
+
           <Box mb={`40px`}>
             <FormLabel>Tagi</FormLabel>
             <Box mb={`10px`}>

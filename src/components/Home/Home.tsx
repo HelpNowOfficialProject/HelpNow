@@ -6,8 +6,8 @@ import LogOut from "../LogOut/LogOut";
 export default function Home() {
   return (
     <Box>
-      <HelpList />
-      <Link to="addPost">
+      {/* <HelpList /> */}
+      <Link to="post/add">
         <Button>Dodaj post</Button>
       </Link>
       <LogOut />

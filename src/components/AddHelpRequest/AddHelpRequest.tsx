@@ -42,6 +42,7 @@ export default function AddHelpRequest() {
   const toast = useToast();
   const posts = collection(db, "posts");
   const navigate = useNavigate();
+  const specialChar = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
   const [initialLocation, setInitialLocation] = useState<ILocation>({
     latitude: 49.946357895803885,
@@ -112,6 +113,20 @@ export default function AddHelpRequest() {
       setTagError("Tag nie może być pusty!");
       return;
     }
+    //checks if the tag has spaces
+    else if(/\s/.test(currentTag)){
+      setTagError("Tag nie może mieć spacji!");
+      return;
+    }
+    //checks if the tag has special characters
+    else if(specialChar.test(currentTag)){
+      setTagError("Tag nie może mieć znaków specjalnych!");
+      return;
+    }
+    else if(currentTag[0].toUpperCase() == currentTag[0]){
+      setTagError("Tag nie może zaczynać się od dużej litery!");
+      return;
+    }
     // Check if the tag exists already
     if (tags.find((e) => e === currentTag)) {
       setTagError("Tag musi być unikatowy!");
@@ -134,8 +149,27 @@ export default function AddHelpRequest() {
   };
 
   const handlePostAdd = async () => {
-    // TODO: Add validation
+    let errorMessage = "";
+    // TODO: Add tag validation
 
+    if(!title){
+      errorMessage = "Brakuje tytułu!";
+    }
+    else if(!description){
+      errorMessage = "Brakuje opisu!";
+    }
+    else if(title[0].toUpperCase() === title[0]){
+      errorMessage = "Tytuł nie może zaczynać się od dużej litery!";
+    }
+
+    if(errorMessage){
+      toast({
+        title: "Błąd!",
+        description: errorMessage,
+        status: "error",
+        isClosable: true,
+      }); return;
+    }
     setIsLoading(true);
 
     const newPost: IPost = {

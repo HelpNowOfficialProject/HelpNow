@@ -108,9 +108,9 @@ export default function Post() {
         )
       );
       toast({
-        title: "Usunięto",
-        description: "Nie udało się pobrać lokalizacji! Próbuję jeszcze raz...",
-        status: "warning",
+        title: "Ostrzeżenie",
+        description: "Anulowano chęć pomocy!",
+        status: "info",
         isClosable: true,
       });
     }

@@ -96,9 +96,8 @@ export default function AddHelpRequest() {
         });
         toast({
           title: "Ostrzeżenie",
-          description:
-            "Nie udało się pobrać lokalizacji! Próbuję jeszcze raz...",
-          status: "warning",
+          description: "Anulowano chęć pomocy!",
+          status: "info",
           isClosable: true,
         });
       }

@@ -24,6 +24,7 @@ import {
   Tooltip,
   Text,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { addDoc, collection } from "firebase/firestore";
@@ -32,6 +33,7 @@ import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { ILocation, IPost } from "../../types/post";
+import GeocodingInput from "../GeocodingInput/GeocodingInput";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import MapComponent from "../MapComponent/MapComponent";
 
@@ -42,7 +44,6 @@ export default function AddHelpRequest() {
   const toast = useToast();
   const posts = collection(db, "posts");
   const navigate = useNavigate();
-  const specialChar = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
   const [initialLocation, setInitialLocation] = useState<ILocation>({
     latitude: 49.946357895803885,
@@ -56,14 +57,12 @@ export default function AddHelpRequest() {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [titleError, setTitleError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
 
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [tagError, setTagError] = useState("");
 
-  const [sliderValue, setSliderValue] = useState(5);
+  const [sliderValue, setSliderValue] = useState(1);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const [isVoluntary, setIsVoluntary] = useState(true);
@@ -115,20 +114,6 @@ export default function AddHelpRequest() {
       setTagError("Tag nie może być pusty!");
       return;
     }
-    //checks if the tag has spaces
-    else if(/\s/.test(currentTag)){
-      setTagError("Tag nie może mieć spacji!");
-      return;
-    }
-    //checks if the tag has special characters
-    else if(specialChar.test(currentTag)){
-      setTagError("Tag nie może mieć znaków specjalnych!");
-      return;
-    }
-    else if(currentTag[0].toUpperCase() == currentTag[0]){
-      setTagError("Tag nie może zaczynać się od dużej litery!");
-      return;
-    }
     // Check if the tag exists already
     if (tags.find((e) => e === currentTag)) {
       setTagError("Tag musi być unikatowy!");
@@ -150,39 +135,20 @@ export default function AddHelpRequest() {
     setIsVoluntary(e.target.checked);
   };
 
+  const handleLocationChange = (location: ILocation) => {
+    setMarkerPosition(location);
+  };
+
   const handlePostAdd = async () => {
-    // TODO: Add tag validation
-    setTitleError("");
-    setDescriptionError("");
+    // TODO: Add validation
 
-
-    if(!title){
-      setTitleError("Brakuje tytułu!");
-      return;
-    }
-    else if(!description){
-      setDescriptionError("Brakuje Opisu!");
-      return;
-    }
-    else if(tags.length==0){
-      setTagError("Brakuje tagów!");
-      return;
-    }
-    else if(title[0].toUpperCase() === title[0]){
-      setTitleError("Tytuł nie może zaczynać się od dużej litery!");
-      return;
-    }
     setIsLoading(true);
 
     const newPost: IPost = {
       authorId: auth.currentUser?.uid as string,
       title,
       description,
-      address: {
-        // TODO: Fix it
-        latitude: 49.946357895803885,
-        longitude: 18.607068901955323,
-      },
+      address: markerPosition,
       tags,
       dangerLevel: sliderValue,
       isVoluntary,
@@ -218,7 +184,13 @@ export default function AddHelpRequest() {
 
   return (
     <>
-      <Container mb="20px">
+      <Container
+        mt={`20px`}
+        mb="20px"
+        bgColor={`hsl(220deg 26% 18%)`}
+        p={`20px`}
+        rounded={`10px`}
+      >
         <Text fontSize="4xl">Dodaj prośbę o pomoc</Text>
         <FormControl>
           <Box mb={`40px`}>
@@ -228,22 +200,6 @@ export default function AddHelpRequest() {
               onChange={handleTitleChange}
               value={title}
             ></Input>
-            {titleError && (
-              <Alert
-                status="error"
-                borderRadius={`10px`}
-                mb="10px"
-                display={"flex"}
-              >
-                <Box display="flex">
-                  <AlertIcon />
-                </Box>
-                <Box>
-                  <AlertTitle>Nie można dodać tytułu!</AlertTitle>
-                  <AlertDescription>{titleError}</AlertDescription>
-                </Box>
-              </Alert>
-            )}
           </Box>
           <Box mb={`40px`}>
             <FormLabel>Opis</FormLabel>
@@ -252,28 +208,9 @@ export default function AddHelpRequest() {
               value={description}
               variant={"filled"}
             ></Textarea>
-             {descriptionError && (
-              <Alert
-                status="error"
-                borderRadius={`10px`}
-                mb="10px"
-                display={"flex"}
-              >
-                <Box display="flex">
-                  <AlertIcon />
-                </Box>
-                <Box>
-                  <AlertTitle>Nie można dodać opisu!</AlertTitle>
-                  <AlertDescription>{descriptionError}</AlertDescription>
-                </Box>
-              </Alert>
-            )}
           </Box>
           <Box mb="40px">
             <FormLabel>Adres</FormLabel>
-            {/* <Input variant={`filled`}></Input>
-            <Alert status="error">Tutaj nie dziala na razie</Alert>
-            <FormHelperText>Format: miasto ulica numer</FormHelperText> */}
             <div className={styles.map}>
               <MapContainer
                 // @ts-ignore
@@ -292,11 +229,13 @@ export default function AddHelpRequest() {
             </div>
 
             <Button onClick={locateMe}>Zlokalizuj mnie!</Button>
+
+            <GeocodingInput onAddressSearch={handleLocationChange} />
           </Box>
 
           <Box mb={`40px`}>
             <FormLabel>Tagi</FormLabel>
-            <Box mb={`10px`}>
+            <Flex mb={`10px`} gap={`5px`}>
               {tags.map((elem, index) => {
                 return (
                   <Tag>
@@ -305,7 +244,7 @@ export default function AddHelpRequest() {
                   </Tag>
                 );
               })}
-            </Box>
+            </Flex>
             <Input
               variant={`filled`}
               className={`tagInput`}
@@ -336,8 +275,8 @@ export default function AddHelpRequest() {
 
             <Slider
               id="slider"
-              defaultValue={1}
-              min={0}
+              defaultValue={sliderValue}
+              min={1}
               max={10}
               colorScheme="teal"
               onChange={(v) => setSliderValue(v)}
@@ -346,13 +285,13 @@ export default function AddHelpRequest() {
               mb={"40px"}
               mt={`40px`}
             >
-              <SliderMark value={0} mt="1" fontSize="sm">
-                0
+              <SliderMark value={1} mt="1" fontSize="sm">
+                1
               </SliderMark>
               <SliderMark value={5} mt="1" fontSize="sm">
                 5
               </SliderMark>
-              <SliderMark value={10} mt="1" fontSize="sm">
+              <SliderMark value={10} mt="1" ml={`-10px`} fontSize="sm">
                 10
               </SliderMark>
               <SliderTrack>
@@ -380,7 +319,7 @@ export default function AddHelpRequest() {
           <Box display="flex" justifyContent={"space-between"}>
             <Button onClick={handlePostAdd}>Wyślij</Button>
             <Link to="/">
-              <Button bgColor="red.600">Odrzuć</Button>
+              <Button colorScheme={`red`}>Odrzuć</Button>
             </Link>
           </Box>
         </FormControl>

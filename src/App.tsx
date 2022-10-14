@@ -9,31 +9,33 @@ import AddHelpRequest from "./components/AddHelpRequest/AddHelpRequest";
 
 import "leaflet/dist/leaflet";
 import Post from "./components/Post/Post";
+import ErrorPage from "./components/ErrorPage/ErrorPage";
 
 const theme = extendTheme({
-  initialColorMode: "dark",
-  useSystemColorMode: false,
+    initialColorMode: "dark",
+    useSystemColorMode: false,
 });
 
 function App() {
-  return (
-    <ChakraProvider theme={theme}>
-      <ColorModeScript initialColorMode={"dark"} />
-      <BrowserRouter>
-        <Routes>
-          <Route path="auth" element={<WithoutAuth />}>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-          </Route>
-          <Route path="*" element={<WithAuth />}>
-            <Route path="" element={<Home />} />
-            <Route path="post/add" element={<AddHelpRequest />} />
-            <Route path={`post/:id`} element={<Post />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ChakraProvider>
-  );
+    return (
+        <ChakraProvider theme={theme}>
+            <ColorModeScript initialColorMode={"dark"} />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="auth" element={<WithoutAuth />}>
+                        <Route path="login" element={<Login />} />
+                        <Route path="register" element={<Register />} />
+                    </Route>
+                    <Route path="*" element={<WithAuth />}>
+                        <Route path="" element={<Home />} />
+                        <Route path="post/add" element={<AddHelpRequest />} />
+                        <Route path={`post/:id`} element={<Post />} />
+                        <Route path="*" element={<ErrorPage />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </ChakraProvider>
+    );
 }
 
 export default App;

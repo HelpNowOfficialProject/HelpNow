@@ -1,108 +1,130 @@
 import {
-  Box,
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-  useToast,
-  Link as ChakraLink,
+    Box,
+    Button,
+    Input,
+    InputGroup,
+    InputRightElement,
+    useToast,
+    Link as ChakraLink,
+    Container,
+    Flex,
+    IconButton,
 } from "@chakra-ui/react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
-
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { AiFillAlert } from "react-icons/ai";
+import style from "./Login.module.css";
 export default function Login() {
-  const toast = useToast();
-  const navigate = useNavigate();
+    const toast = useToast();
+    const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+    };
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    };
 
-  const handleLogin = async () => {
-    // TODO: Better way to achieve that - maybe a little text under the inputs
-    if (!email) {
-      toast({
-        title: "Błąd podczas logowania",
-        description: "Podaj e-mail",
-        status: "error",
-        isClosable: true,
-      });
-      return;
-    } else if (!password) {
-      toast({
-        title: "Błąd podczas logowania",
-        description: "Podaj hasło",
-        status: "error",
-        isClosable: true,
-      });
-      return;
-    }
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {
-        console.log(user);
-        navigate("/");
-      })
-      .catch((err: any) => {
-        let errorMessage = `Kod: ${err.code}; ${err.message}`;
-        if (err.code === "auth/invalid-email") {
-          errorMessage = "Niepoprawny e-mail";
-        } else if (err.code === "auth/user-not-found") {
-          errorMessage = "Twoje konto nie istnieje!";
-        } else if (err.code === "auth/wrong-password") {
-          errorMessage = "Złe hasło!";
+    const handleLogin = async () => {
+        // TODO: Better way to achieve that - maybe a little text under the inputs
+        if (!email) {
+            toast({
+                title: "Błąd podczas logowania",
+                description: "Podaj e-mail",
+                status: "error",
+                isClosable: true,
+            });
+            return;
+        } else if (!password) {
+            toast({
+                title: "Błąd podczas logowania",
+                description: "Podaj hasło",
+                status: "error",
+                isClosable: true,
+            });
+            return;
         }
-        toast({
-          title: "Błąd podczas logowania",
-          description: errorMessage,
-          status: "error",
-        });
-      });
-  };
 
-  return (
-    <div>
-      <Input
-        placeholder="E-mail"
-        value={email}
-        onChange={handleEmailChange}
-        type={"email"}
-      />
+        signInWithEmailAndPassword(auth, email, password)
+            .then((user) => {
+                console.log(user);
+                navigate("/");
+            })
+            .catch((err: any) => {
+                let errorMessage = `Kod: ${err.code}; ${err.message}`;
+                if (err.code === "auth/invalid-email") {
+                    errorMessage = "Niepoprawny e-mail";
+                } else if (err.code === "auth/user-not-found") {
+                    errorMessage = "Twoje konto nie istnieje!";
+                } else if (err.code === "auth/wrong-password") {
+                    errorMessage = "Złe hasło!";
+                }
+                toast({
+                    title: "Błąd podczas logowania",
+                    description: errorMessage,
+                    status: "error",
+                });
+            });
+    };
 
-      <InputGroup>
-        <Input
-          placeholder="Hasło"
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        <InputRightElement width="4.5rem">
-          <Button
-            h="1.75rem"
-            size="sm"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? "Ukryj" : "Pokaż"}
-          </Button>
-        </InputRightElement>
-      </InputGroup>
-      <Button onClick={handleLogin} mt="20px">
-        Zaloguj
-      </Button>
-      <Box mt="20px">
-        <ChakraLink>
-          <Link to="../register">Zarejestruj się</Link>
-        </ChakraLink>
-      </Box>
-    </div>
-  );
+    return (
+        <Container>
+            <Flex
+                className={style.container}
+                m={`auto`}
+                mt={`20px`}
+                rounded={`20px`}
+                p={`20px`}
+                bgColor={`hsl(220deg 26% 18%)`}
+                width={`100%`}
+                justifyContent={`center`}
+            >
+                <Flex flexDir={`column`} gap={`5px`} width={`100%`} mb={`20px`}>
+                    <Input
+                        placeholder="E-mail"
+                        value={email}
+                        onChange={handleEmailChange}
+                        variant={`filled`}
+                        type={"email"}
+                    />
+
+                    <InputGroup>
+                        <Input
+                            placeholder="Hasło"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={handlePasswordChange}
+                            variant={`filled`}
+                        />
+                        <InputRightElement width="3rem">
+                            <IconButton
+                                size="sm"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                                aria-label={""}
+                            >
+                                {showPassword ? (
+                                    <AiFillEyeInvisible />
+                                ) : (
+                                    <AiFillEye />
+                                )}
+                            </IconButton>
+                        </InputRightElement>
+                    </InputGroup>
+                </Flex>
+                <Flex flexDir={`column`} gap={`10px`}>
+                    <Button onClick={handleLogin}>Zaloguj</Button>
+                    <Link to="../register">
+                        <Button>Zarejestruj się</Button>
+                    </Link>
+                </Flex>
+            </Flex>
+        </Container>
+    );
 }

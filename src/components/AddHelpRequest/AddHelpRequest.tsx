@@ -75,7 +75,7 @@ export default function AddHelpRequest() {
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+      setTitle(e.target.value);
   };
 
   const handleMarkerPosition = (newLocation: ILocation) => {
@@ -117,8 +117,19 @@ export default function AddHelpRequest() {
     let newTag =
       currentTag[0].toUpperCase() + currentTag.slice(1).toLowerCase();
 
-    if (!currentTag) {
+    //doesn't work for some reason
+    if (currentTag=="") {
       setTagError("Tag nie może być pusty!");
+      return;
+    }
+
+    else if(tags.length==5){
+      setTagError("Nie może być więcej niż 5 tagów!");
+      return;
+    }
+
+    else if(currentTag.length>10){
+      setTagError("Tag nie może mieć więcej niż 10 znaków");
       return;
     }
 

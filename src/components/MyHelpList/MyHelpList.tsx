@@ -43,7 +43,10 @@ export default function MyHelpList() {
 
     setIsLoading(true);
 
-    const docs = acceptedPosts.map((e) => e.id);
+    let docs = acceptedPosts.map((e) => e.id);
+    if (docs.length < 1) {
+      docs = [];
+    }
     const docsRef = collection(db, "posts");
     const q = query(docsRef, where(documentId(), "in", docs));
 

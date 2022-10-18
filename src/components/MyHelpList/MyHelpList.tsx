@@ -2,9 +2,11 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import {
   collection,
   doc,
+  DocumentData,
   documentId,
   getDocs,
   query,
+  QuerySnapshot,
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -44,14 +46,18 @@ export default function MyHelpList() {
     setIsLoading(true);
 
     let docs = acceptedPosts.map((e) => e.id);
-    if (docs.length < 1) {
-      docs = [];
-    }
     const docsRef = collection(db, "posts");
-    const q = query(docsRef, where(documentId(), "in", docs));
+    let myPosts: QuerySnapshot<DocumentData> | any = { docs: [] };
+    if (!docs.length) {
+      const q = query(docsRef, where(documentId(), "in", docs));
+      myPosts = await getDocs(q);
+    }
 
-    const myPosts = await getDocs(q);
-    setPosts(myPosts.docs.map((e) => ({ ...e.data(), uuid: e.id } as IPost)));
+    setPosts(
+      myPosts.docs.map(
+        (e: DocumentData) => ({ ...e.data(), uuid: e.id } as IPost)
+      )
+    );
 
     setIsLoading(false);
   };

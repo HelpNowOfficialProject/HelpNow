@@ -48,7 +48,7 @@ export default function MyHelpList() {
     let docs = acceptedPosts.map((e) => e.id);
     const docsRef = collection(db, "posts");
     let myPosts: QuerySnapshot<DocumentData> | any = { docs: [] };
-    if (!docs.length) {
+    if (docs.length) {
       const q = query(docsRef, where(documentId(), "in", docs));
       myPosts = await getDocs(q);
     }

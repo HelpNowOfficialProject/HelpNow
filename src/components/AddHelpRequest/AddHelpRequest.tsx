@@ -121,7 +121,7 @@ export default function AddHelpRequest() {
     if (currentTag === "") {
       setTagError("Tag nie może być pusty!");
       return;
-    } else if (tags.length >= 5) {
+    } else if (tags.length === 5) {
       setTagError("Nie może być więcej niż 5 tagów!");
       return;
     } else if (currentTag.length > 10) {
@@ -177,8 +177,7 @@ export default function AddHelpRequest() {
       setDescriptionError("Brakuje Opisu!");
       return;
     } else if (tags.length === 0) {
-      setTagError("Brakuje tagów!");
-      return;
+      errorMessage = "Brakuje tagów!";
     }
 
     if (errorMessage) {
@@ -201,6 +200,7 @@ export default function AddHelpRequest() {
       dangerLevel: sliderValue,
       isVoluntary,
       timestamp: new Date(),
+      isCompleted: false,
     };
 
     await addDoc(posts, newPost);

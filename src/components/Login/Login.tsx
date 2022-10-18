@@ -9,6 +9,8 @@ import {
     Container,
     Flex,
     IconButton,
+    Heading,
+    Image,
 } from "@chakra-ui/react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
@@ -75,13 +77,19 @@ export default function Login() {
     };
 
     return (
-        <Container>
+        <Container className={style.containerWrapper} mt={5}>
+            <Flex flexDir="column" width={"100%"} justifyContent={"center"} alignItems={"center"} gap={5}>
+            <Image src="https://i.iplsc.com/roksana-wegiel/000DAAB8EQIFMUFI-C122-F4.jpg" height={200} width={200}></Image>
+            {/* <Heading>HelpNow</Heading> */}
+            <Heading>Logowanie</Heading>
+            </Flex>
             <Flex
                 className={style.container}
                 m={`auto`}
                 mt={`20px`}
                 rounded={`20px`}
                 p={`20px`}
+                px={`40px`}
                 bgColor={`hsl(220deg 26% 18%)`}
                 width={`100%`}
                 justifyContent={`center`}

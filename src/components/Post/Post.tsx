@@ -1,52 +1,165 @@
 // TODO - Change to small post design
 import {
+  Alert,
+  AlertIcon,
+  Box,
   Button,
   Container,
-  Box,
-  Tag,
-  Text,
-  Heading,
   Flex,
-  Icon,
-  useToast,
-  TagLabel,
-  Slider,
-  SliderMark,
-  SliderTrack,
-  SliderFilledTrack,
-  Tooltip,
-  SliderThumb,
   FormLabel,
+  Heading,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
+  Tag,
+  TagLabel,
+  Text,
+  Tooltip,
+  useToast,
 } from "@chakra-ui/react";
-import { Link, Navigate, useParams } from "react-router-dom";
-import { AiFillDollarCircle } from "react-icons/ai";
-import { IPost } from "../../types/post";
-import { useDocumentData } from "react-firebase-hooks/firestore";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import LoadingPage from "../LoadingPage/LoadingPage";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
-import ErrorPage from "../ErrorPage/ErrorPage";
+import {
+  useCollectionData,
+  useDocument,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
+import { AiFillDollarCircle } from "react-icons/ai";
+import { MdDelete } from "react-icons/md";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import { parseJsonText } from "typescript";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { auth, db } from "../../firebase";
+import { ILocation, IPost } from "../../types/post";
+import ErrorPage from "../ErrorPage/ErrorPage";
+import Loading from "../Loading/Loading";
+import LoadingPage from "../LoadingPage/LoadingPage";
+import calculateDistance from "../utils/calculateDistance";
 import ReactTimeAgo from "react-time-ago";
 
 export default function Post() {
-  const toast = useToast();
   const { id } = useParams();
+  const toast = useToast();
+  const navigate = useNavigate();
 
-  const [value, loading, error] = useDocumentData(doc(db, "posts", id ?? ""));
+  const [value, loading, error] = useDocument(doc(db, "posts", id ?? ""));
+  const [myAddress, addressLoading, addressError] = useDocumentData(
+    doc(
+      db,
+      "users",
+      (auth.currentUser as any).uid as string,
+      "address",
+      "address"
+    )
+  );
+  const [myPosts, myPostsLoading, myPostsError] = useCollectionData(
+    collection(
+      db,
+      "users",
+      (auth.currentUser as any).uid as string,
+      "acceptedPosts"
+    )
+  );
+  const [isLoadingChangingStatus, setIsLoadingChangingStatus] = useState(false);
   const [authorName, setAuthorName] = useState("");
   const [post, setPost] = useState<IPost>();
 
   const handleValueChange = async () => {
-    setPost(value as unknown as IPost);
+    if (!value || !value.data()) return;
+    setPost({
+      ...((value as any).data() as unknown as IPost),
+      uuid: value?.id,
+    });
 
     const author = await getDoc(
-      doc(db, "users", (value as unknown as IPost).authorId as string)
+      doc(
+        db,
+        "users",
+        ((value as any).data() as unknown as IPost).authorId as string
+      )
     );
     let { name, surname } = author.data() as any;
     setAuthorName(`${name} ${surname}`);
+  };
+
+  const handleAccept = async () => {
+    console.log("accept");
+
+    console.log(post);
+
+    setIsLoadingChangingStatus(true);
+    await setDoc(
+      doc(
+        db,
+        "users",
+        (auth.currentUser as any).uid as string,
+        "acceptedPosts",
+        (post as IPost).uuid as string
+      ),
+      {
+        id: post?.uuid,
+        uid: (auth.currentUser as any).uid,
+      }
+    );
+    toast({
+      title: "Zaakceptowano",
+      description: "Zgłoszono chęć pomocy!",
+      status: "success",
+      isClosable: true,
+    });
+    setIsLoadingChangingStatus(false);
+    // navigate("/");
+  };
+
+  const handleDismiss = async () => {
+    setIsLoadingChangingStatus(true);
+    if (myPosts?.find((e) => e.id === (post as IPost).uuid)) {
+      await deleteDoc(
+        doc(
+          db,
+          "users",
+          (auth.currentUser as any).uid as string,
+          "acceptedPosts",
+          (post as IPost).uuid as string
+        )
+      );
+      toast({
+        title: "Ostrzeżenie",
+        description: "Anulowano chęć pomocy!",
+        status: "info",
+        isClosable: true,
+      });
+    }
+
+    setIsLoadingChangingStatus(false);
+    navigate("/");
+    return;
+  };
+
+  const handleCompleted = () => {
+    console.log("mega");
+  };
+
+  const handleDelete = async () => {
+    setIsLoadingChangingStatus(true);
+
+    await deleteDoc(doc(db, "posts", (value as DocumentData).id));
+    navigate("/");
+    toast({
+      title: "Usunięto post!",
+      status: "success",
+      isClosable: true,
+    });
+
+    setIsLoadingChangingStatus(false);
   };
 
   useEffect(() => {
@@ -55,13 +168,18 @@ export default function Post() {
     }
   }, [value]);
 
-  if (error) {
+  console.log(addressError);
+  console.log(myAddress);
+  console.log(addressLoading);
+  console.log(post);
+
+  if (error || myPostsError || addressError) {
+    console.log(error, myPostsError, addressError);
     return <ErrorPage />;
   }
 
-  if (loading || !post) return <LoadingPage />;
-
-  console.log(post);
+  if (loading || addressLoading || !post || myPostsLoading)
+    return <LoadingPage />;
 
   return (
     <Flex padding={3} flexDirection={"column"}>
@@ -83,7 +201,13 @@ export default function Post() {
             timeStyle={`twitter`}
           />
         </Text>
-        <Text fontSize="md">{authorName}</Text>
+        {post.authorId === (auth as any).currentUser.uid ? (
+          <Text fontSize="md">
+            <b>Ja</b> ({authorName})
+          </Text>
+        ) : (
+          <Text fontSize="md">{authorName}</Text>
+        )}
         <Flex className="titleBox" mb={`15px`} flexDir={`row`}>
           <Heading width={`100%`}>{(post as IPost).title}</Heading>
           <Tooltip
@@ -154,6 +278,13 @@ export default function Post() {
     </Marker> */}
           </MapContainer>
         </div>
+
+        <Box>Odległość</Box>
+        <Text>
+          {Math.round(calculateDistance(post.address, myAddress as ILocation))}{" "}
+          km od Twojego adresu zamieszkania
+        </Text>
+
         <Box mb={`15px`} mt={`20px`}>
           <FormLabel>Stopień zagrożenia</FormLabel>
           <Slider
@@ -192,16 +323,62 @@ export default function Post() {
             <SliderThumb display={"none"} />
           </Slider>
         </Box>
-        <Flex className="buttonBox" width={`100%`} gap={`10px`}>
-          <Button className="takeOfferBtn" width={`100%`} colorScheme={`green`}>
-            Przyjmij
-          </Button>
-          <Link to={`/`} style={{ width: `100%` }}>
-            <Button className="denyOfferBtn" width={`100%`} colorScheme={`red`}>
+        {(myPosts as any[]).find((e) => e.id === post.uuid) && (
+          <Alert status="success" variant="left-accent" m={2} my={5}>
+            <AlertIcon />
+            Zgłoszono chęć pomocy!
+          </Alert>
+        )}
+        {isLoadingChangingStatus ? (
+          <Loading />
+        ) : post.authorId === (auth as any).currentUser.uid ? (
+          <Flex className="buttonBox" w={`100%`} gap={`10px`}>
+            <Button
+              className={`markAsCompletedBtn`}
+              width={`100%`}
+              colorScheme={`green`}
+              onClick={handleCompleted}
+            >
+              Oznacz jako wykonany
+            </Button>
+            <Button
+              className={`deletePostBtn`}
+              w={`100%`}
+              colorScheme={`red`}
+              onClick={handleDelete}
+            >
+              <MdDelete />
+              Usuń Post
+            </Button>
+          </Flex>
+        ) : (
+          <Flex className="buttonBox" width={`100%`} gap={`10px`}>
+            <Button
+              className="takeOfferBtn"
+              width={`100%`}
+              colorScheme={`green`}
+              onClick={handleAccept}
+              disabled={(myPosts as any[]).find((e) => e.id === post.uuid)}
+            >
+              Przyjmij
+            </Button>
+
+            <Button
+              className="denyOfferBtn"
+              width={`100%`}
+              colorScheme={`red`}
+              onClick={handleDismiss}
+              disabled={!(myPosts as any[]).find((e) => e.id === post.uuid)}
+            >
               Odrzuć
             </Button>
-          </Link>
-        </Flex>
+          </Flex>
+        )}
+        <Link to={`/`} style={{ width: `100%` }}>
+          <Button width={`100%`} colorScheme={`gray`} my={2}>
+            Wróć do strony głównej
+          </Button>
+        </Link>
       </Container>
     </Flex>
   );

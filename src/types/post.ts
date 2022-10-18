@@ -9,6 +9,7 @@ export interface IPost {
   isVoluntary: boolean;
   author?: IAuthor;
   timestamp: any;
+  isCompleted: boolean;
 }
 
 export interface IAuthor {

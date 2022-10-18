@@ -11,16 +11,19 @@ import {
   SliderFilledTrack,
   SliderMark,
   Heading,
+  Badge,
   Alert,
   AlertIcon,
   FormLabel,
 } from "@chakra-ui/react";
 import { BrowserRouter, Routes, useNavigate } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
-import { IPost } from "../../types/post";
+import { ILocation, IPost } from "../../types/post";
+import calculateDistance from "../utils/calculateDistance";
 
 interface ISmallPost {
   post: IPost;
+  homeAddress: ILocation;
 }
 
 export default function SmallPost(props: ISmallPost) {
@@ -35,8 +38,7 @@ export default function SmallPost(props: ISmallPost) {
       <Box
         bgColor={`hsl(220deg 26% 18%)`}
         rounded={`10px`}
-        padding={`15px`}
-        pt={`10px`}
+        padding={`30px`}
         w={`200px`}
         maxW={"200px"}
         onClick={navigateToBigPost}
@@ -58,6 +60,29 @@ export default function SmallPost(props: ISmallPost) {
           </Text>
           <Heading size={`lg`}>{props.post.title}</Heading>
         </Box>
+        <Flex flexDir={`row`} justifyContent={`space-between`}>
+          <Heading size={`lg`} width={`90%`}>
+            {props.post.title}
+          </Heading>
+          <Badge
+            colorScheme={`green`}
+            variant={`solid`}
+            rounded={`50%`}
+            w={`30px`}
+            h={`30px`}
+            alignItems={`center`}
+            textAlign={`center`}
+            justifyContent={`center`}
+          >
+            {Math.round(
+              calculateDistance(
+                props.post.address,
+                props.homeAddress as ILocation
+              )
+            )}{" "}
+            km
+          </Badge>
+        </Flex>
         <Flex
           flexDir={`row`}
           gap={`5px`}
@@ -66,6 +91,7 @@ export default function SmallPost(props: ISmallPost) {
           flexWrap={"wrap"}
           // minW={`100px`}
           width={"100%"}
+          // minW={`100px`}
         >
           {props.post.tags.map((elem, index) => {
             return (
@@ -84,7 +110,7 @@ export default function SmallPost(props: ISmallPost) {
             max={10}
             colorScheme="teal"
             mb={"10px"}
-            mt={`30px`}
+            mt={`50px`}
             isReadOnly
             value={props.post.dangerLevel}
           >

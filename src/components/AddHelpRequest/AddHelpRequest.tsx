@@ -36,6 +36,7 @@ import { ILocation, IPost } from "../../types/post";
 import GeocodingInput from "../GeocodingInput/GeocodingInput";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import MapComponent from "../MapComponent/MapComponent";
+import { getEmergencyLevel } from "../utils/getColor";
 
 import styles from "./AddHelpRequest.module.css";
 
@@ -359,7 +360,7 @@ export default function AddHelpRequest() {
               defaultValue={sliderValue}
               min={1}
               max={10}
-              colorScheme="teal"
+              colorScheme={getEmergencyLevel(sliderValue)}
               onChange={(v) => setSliderValue(v)}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}

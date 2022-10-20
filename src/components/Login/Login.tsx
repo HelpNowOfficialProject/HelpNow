@@ -79,7 +79,7 @@ export default function Login() {
     return (
         <Container className={style.containerWrapper} mt={5}>
             <Flex flexDir="column" width={"100%"} justifyContent={"center"} alignItems={"center"} gap={5}>
-            <Image src="https://i.iplsc.com/roksana-wegiel/000DAAB8EQIFMUFI-C122-F4.jpg" height={200} width={200}></Image>
+            <Image src={`${process.env.PUBLIC_URL}/3.png`} height={200} width={200} rounded={`20px`}></Image>
             {/* <Heading>HelpNow</Heading> */}
             <Heading>Logowanie</Heading>
             </Flex>

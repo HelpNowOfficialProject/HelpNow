@@ -77,18 +77,18 @@ export default function MyHelpList() {
   }
 
   return (
-    <Box width={`100%`} mt={`10px`}>
+    <Flex className="roxie" width={`100%`} mt={`10px`} justifyContent={`space-between`}>
       {posts && posts.length > 0 ? (
-        <Flex width={"100%"} flexWrap={"wrap"} gap={`10px`}>
+        <Flex width={"100%"} flexWrap={"wrap"} gap={`10px`} justifyItems={"center"}>
           {posts.map((doc: IPost) => {
             return (
-              <SmallPost post={doc} homeAddress={myAddress as ILocation} />
+              <SmallPost post={doc} homeAddress={myAddress as ILocation}  />
             );
           })}
         </Flex>
       ) : (
         <Text>Jeszcze nie zadeklarowano pomocy!</Text>
       )}
-    </Box>
+    </Flex>
   );
 }

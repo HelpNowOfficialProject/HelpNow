@@ -14,19 +14,20 @@ import LogOut from "../LogOut/LogOut";
 
 export default function Header() {
   return (
-    <Container w={`100%`} m={`0`} mt={`15px`} justifyContent={`space-between`}>
-      <Flex w="100%" justifyContent="space-between">
-        <Flex gap={2} alignItems={"center"} w={`50%`}>
+    <Flex w={`100%`} px={`16px`} mt={`15px`} justifyContent={`space-between`}>
+      {/* <Flex w="100vw" justifyContent="space-between"> */}
           <Link to="/">
+        <Flex gap={2} alignItems={"center"}>
             <Image
-              src={`${process.env.PUBLIC_URL}/logo.png`}
+              src={`${process.env.PUBLIC_URL}/2.png`}
               width={"4em"}
               borderRadius={20}
             />
-          </Link>
+         
           <Heading>HelpNow</Heading>
         </Flex>
-        <Flex gap="2px" alignItems="center" w={`50%`}>
+          </Link>
+        <Flex gap="2px" alignItems="center" >
           <Box mr={`10px`} ml={`10px`}>
             <Tooltip label="Dodaj post">
               <Link to="post/add">
@@ -46,7 +47,7 @@ export default function Header() {
             </Box>
           </Flex>
         </Flex>
-      </Flex>
-    </Container>
+      {/* </Flex> */}
+    </Flex>
   );
 }

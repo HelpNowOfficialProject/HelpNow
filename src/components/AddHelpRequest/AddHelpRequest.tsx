@@ -219,7 +219,7 @@ export default function AddHelpRequest() {
   };
 
   const getIPLocation = async () => {
-    const { data } = await axios.get("http://ipwho.is/");
+    const { data } = await axios.get("https://ipwho.is/");
     return { latitude: data.latitude, longitude: data.longitude };
   };
 

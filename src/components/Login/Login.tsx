@@ -57,7 +57,7 @@ export default function Login() {
         signInWithEmailAndPassword(auth, email, password)
             .then((user) => {
                 console.log(user);
-                navigate("/");
+                navigate("/app");
             })
             .catch((err: any) => {
                 let errorMessage = `Kod: ${err.code}; ${err.message}`;
@@ -78,10 +78,21 @@ export default function Login() {
 
     return (
         <Container className={style.containerWrapper} mt={5}>
-            <Flex flexDir="column" width={"100%"} justifyContent={"center"} alignItems={"center"} gap={5}>
-            <Image src={`${process.env.PUBLIC_URL}/3.png`} height={200} width={200} rounded={`20px`}></Image>
-            {/* <Heading>HelpNow</Heading> */}
-            <Heading>Logowanie</Heading>
+            <Flex
+                flexDir="column"
+                width={"100%"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                gap={5}
+            >
+                <Image
+                    src={`${process.env.PUBLIC_URL}/3.png`}
+                    height={200}
+                    width={200}
+                    rounded={`20px`}
+                ></Image>
+                {/* <Heading>HelpNow</Heading> */}
+                <Heading>Logowanie</Heading>
             </Flex>
             <Flex
                 className={style.container}

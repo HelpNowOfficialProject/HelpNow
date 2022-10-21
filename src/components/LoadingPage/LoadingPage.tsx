@@ -31,7 +31,7 @@ export default function LoadingPage() {
                         Trwa to zbyt długo... być może dany element nie
                         istnieje?
                     </Text>
-                    <Link to="/">
+                    <Link to="/app">
                         <Button colorScheme={"purple"}>
                             Wróć do strony głównej
                         </Button>

@@ -45,7 +45,7 @@ import Loading from "../Loading/Loading";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import calculateDistance from "../utils/calculateDistance";
 import ReactTimeAgo from "react-time-ago";
-import {getDistanceColor, getEmergencyLevel} from "../utils/getColor";
+import { getDistanceColor, getEmergencyLevel } from "../utils/getColor";
 
 export default function Post() {
     const { id } = useParams();
@@ -119,7 +119,7 @@ export default function Post() {
             isClosable: true,
         });
         setIsLoadingChangingStatus(false);
-        // navigate("/");
+        // navigate("/app");
     };
 
     const handleDismiss = async () => {
@@ -143,7 +143,7 @@ export default function Post() {
         }
 
         setIsLoadingChangingStatus(false);
-        navigate("/");
+        navigate("/app");
         return;
     };
 
@@ -155,7 +155,7 @@ export default function Post() {
         setIsLoadingChangingStatus(true);
 
         await deleteDoc(doc(db, "posts", (value as DocumentData).id));
-        navigate("/");
+        navigate("/app");
         toast({
             title: "Usunięto post!",
             status: "success",
@@ -413,7 +413,7 @@ export default function Post() {
                         </Button>
                     </Flex>
                 )}
-                <Link to={`/`} style={{ width: `100%` }}>
+                <Link to={`/app`} style={{ width: `100%` }}>
                     <Button width={`100%`} colorScheme={`gray`} my={2}>
                         Wróć do strony głównej
                     </Button>

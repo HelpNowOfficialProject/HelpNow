@@ -45,7 +45,8 @@ export default function AddHelpRequest() {
   const toast = useToast();
   const posts = collection(db, "posts");
   const navigate = useNavigate();
-  const specialChar = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const specialCharTag = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const specialCharOther = /[`@#$%^&*_+\=\[\]{};':\\|<>\/]/;
 
   const [initialLocation, setInitialLocation] = useState<ILocation>({
     latitude: 49.946357895803885,
@@ -122,11 +123,11 @@ export default function AddHelpRequest() {
     if (currentTag === "") {
       setTagError("Tag nie może być pusty!");
       return;
-    } else if (tags.length === 5) {
-      setTagError("Nie może być więcej niż 5 tagów!");
+    } else if (tags.length === 8) {
+      setTagError("Nie może być więcej niż 8 tagów!");
       return;
-    } else if (currentTag.length > 10) {
-      setTagError("Tag nie może mieć więcej niż 10 znaków");
+    } else if (currentTag.length > 15) {
+      setTagError("Tag nie może mieć więcej niż 15 znaków");
       return;
     }
 
@@ -136,7 +137,7 @@ export default function AddHelpRequest() {
       return;
     }
     //checks if the tag has special characters
-    else if (specialChar.test(newTag)) {
+    else if (specialCharTag.test(newTag)) {
       setTagError("Tag nie może mieć znaków specjalnych!");
       return;
     }
@@ -170,6 +171,7 @@ export default function AddHelpRequest() {
     let errorMessage = "";
     setTitleError("");
     setDescriptionError("");
+    setTagError("");
 
     if (!title) {
       setTitleError("Brakuje tytułu!");
@@ -178,7 +180,23 @@ export default function AddHelpRequest() {
       setDescriptionError("Brakuje Opisu!");
       return;
     } else if (tags.length === 0) {
-      errorMessage = "Brakuje tagów!";
+      setTagError("Brakuje tagów!");
+      return;
+    } else if (title.length > 48) {
+      setTitleError("Tytuł nie może mieć więcej niż 48 znaków");
+      return;
+    } else if (description.length > 256) {
+      setDescriptionError("Opis nie może mieć więcej niż 256 znaków");
+      return;
+    } else if (specialCharOther.test(title)){
+      setTitleError("Tytuł nie może zawierać znaków specjalnych");
+      return;
+    } else if (specialCharOther.test(description)){
+      setDescriptionError("Opis nie może zawierać znaków specjalnych");
+      return;
+    } else if (title[0].toLowerCase() == title[0]){
+      setTitleError("Tytuł musi być z dużej litery");
+      return;
     }
 
     if (errorMessage) {

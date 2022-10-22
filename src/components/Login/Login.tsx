@@ -86,7 +86,7 @@ export default function Login() {
                 gap={5}
             >
                 <Image
-                    src={`${process.env.PUBLIC_URL}/3.png`}
+                    src={`${process.env.PUBLIC_URL}/full.jpg`}
                     height={200}
                     width={200}
                     rounded={`20px`}

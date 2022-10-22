@@ -46,7 +46,7 @@ export default function AddHelpRequest() {
     const posts = collection(db, "posts");
     const navigate = useNavigate();
     const specialCharTag = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    const specialCharOther = /[`@#$%^&*_+\=\[\]{};':\\|<>\/]/;
+    const specialCharOther = /[`#@$%^&*_+\=\[\]{};':\\|<>\/]/;
 
     const [initialLocation, setInitialLocation] = useState<ILocation>({
         latitude: 49.946357895803885,
@@ -170,25 +170,20 @@ export default function AddHelpRequest() {
 
         if (!title) {
             errorMessage = "Brakuje tytułu!";
-        } else if (!description) {
-            errorMessage = "Brakuje opisu!";
-        } else if (tags.length === 0) {
-            errorMessage = "Brakuje tagów!";
         } else if (title.length > 48) {
             errorMessage = "Tytuł nie może mieć więcej niż 48 znaków";
-            return;
-        } else if (description.length > 256) {
-            errorMessage = "Opis nie może mieć więcej niż 256 znaków";
-            return;
         } else if (specialCharOther.test(title)) {
             errorMessage = "Tytuł nie może zawierać znaków specjalnych";
-            return;
+        } else if (title[0].toLowerCase() === title[0]) {
+            errorMessage = "Tytuł musi być z dużej litery";
+        } else if (!description) {
+            errorMessage = "Brakuje opisu!";
+        } else if (description.length > 256) {
+            errorMessage = "Opis nie może mieć więcej niż 256 znaków";
         } else if (specialCharOther.test(description)) {
             errorMessage = "Opis nie może zawierać znaków specjalnych";
-            return;
-        } else if (title[0].toLowerCase() == title[0]) {
-            errorMessage = "Tytuł musi być z dużej litery";
-            return;
+        } else if (tags.length === 0) {
+            errorMessage = "Brakuje tagów!";
         }
 
         if (errorMessage) {
@@ -399,7 +394,7 @@ export default function AddHelpRequest() {
                     <Box display="flex" justifyContent={"space-between"}>
                         <Button onClick={handlePostAdd}>Wyślij</Button>
                         <Link to="/app">
-                            <Button colorScheme={`red`}>Odrzuć</Button>
+                            <Button colorScheme={`red`}>Wróć</Button>
                         </Link>
                     </Box>
                 </FormControl>

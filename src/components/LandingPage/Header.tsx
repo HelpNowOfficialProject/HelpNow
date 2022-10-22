@@ -39,7 +39,7 @@ export default function Header() {
                         </Heading>
                     </Heading>
                     <Text color={"gray.500"} py={4}>
-                        Używaj tej aplikacji, żeby pomagać innym ludzią oraz
+                        Używaj tej aplikacji, żeby pomagać innym ludziom oraz
                         otrzymywać pomoc kiedy jej potrzebujesz. Zarejestruj się
                         już dziś używając przycisku niżej
                     </Text>

@@ -149,18 +149,19 @@ export default function Register() {
                     surname: surname,
                 });
 
-                const addressRef = collection(
-                    db,
-                    "users",
-                    user.user.uid,
-                    "address"
-                );
                 await setDoc(
                     doc(db, "users", user.user.uid, "address", "address"),
                     {
                         uid: user.user.uid,
                         latitude: markerPosition.latitude,
                         longitude: markerPosition.longitude,
+                    }
+                );
+                await setDoc(
+                    doc(db, "users", user.user.uid, "address", "phoneNumber"),
+                    {
+                        uid: user.user.uid,
+                        phoneNumber: phoneNumber,
                     }
                 );
                 console.log(user);

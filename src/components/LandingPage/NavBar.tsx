@@ -13,7 +13,7 @@ export default function Navbar() {
                 >
                     <Box>
                         <Image
-                            src={`${process.env.PUBLIC_URL}/2.png`}
+                            src={`${process.env.PUBLIC_URL}/full.jpg`}
                             height="80px"
                             width="80px"
                             rounded={`20px`}
@@ -28,9 +28,7 @@ export default function Navbar() {
                                     variant={"solid"}
                                     colorScheme={"green"}
                                 >
-                                    {auth.currentUser
-                                        ? "Przejdź do aplikacji"
-                                        : "Zaloguj się"}
+                                    Przejdź do aplikacji
                                 </Button>
                             </Link>
                         </Stack>

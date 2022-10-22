@@ -24,12 +24,14 @@ export default function Header() {
             <Link to="/app">
                 <Flex gap={2} alignItems={"center"}>
                     <Image
-                        src={`${process.env.PUBLIC_URL}/2.png`}
+                        src={`${process.env.PUBLIC_URL}/full.jpg`}
                         width={"4em"}
                         borderRadius={20}
                     />
 
-                    <Heading>HelpNow</Heading>
+                    <Heading display={["none", "none", "flex"]}>
+                        HelpNow
+                    </Heading>
                 </Flex>
             </Link>
             <Flex gap="2px" alignItems="center">

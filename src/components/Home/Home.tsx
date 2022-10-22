@@ -1,4 +1,5 @@
 import {
+    Box,
     Container,
     Flex,
     Heading,
@@ -10,10 +11,16 @@ import {
 } from "@chakra-ui/react";
 import HelpList from "../HelpList/HelpList";
 import PostTypes from "../../types/types";
+import SearchBar from "../SearchBar/SearchBar";
+import { useState } from "react";
+import Footer from "../LandingPage/Footer";
 export default function Home() {
+    const [searchValue, setSearchValue] = useState("");
+
     return (
         <Container minW={`100%`} mt={`10px`}>
-            <Tabs variant="enclosed">
+            <SearchBar value={searchValue} setValue={setSearchValue} />
+            <Tabs variant="enclosed" mt={4}>
                 <TabList>
                     <Tab>Pomogę w...</Tab>
                     <Tab>Najbliższe</Tab>
@@ -26,7 +33,10 @@ export default function Home() {
                             <Heading textAlign={"center"} mb={4}>
                                 Pomogę w
                             </Heading>
-                            <HelpList type={PostTypes.DECLARED} />
+                            <HelpList
+                                type={PostTypes.DECLARED}
+                                q={searchValue}
+                            />
                             {/* <MyHelpList /> */}
                         </Flex>
                     </TabPanel>
@@ -35,7 +45,10 @@ export default function Home() {
                             <Heading textAlign={"center"} mb={4}>
                                 Najbliższe
                             </Heading>
-                            <HelpList type={PostTypes.CLOSEST} />
+                            <HelpList
+                                type={PostTypes.CLOSEST}
+                                q={searchValue}
+                            />
                         </Flex>
                     </TabPanel>
                     <TabPanel>
@@ -43,7 +56,7 @@ export default function Home() {
                             <Heading textAlign={"center"} mb={4}>
                                 Wszystkie posty
                             </Heading>
-                            <HelpList type={PostTypes.ALL} />
+                            <HelpList type={PostTypes.ALL} q={searchValue} />
                         </Flex>
                     </TabPanel>
                     <TabPanel>
@@ -51,12 +64,15 @@ export default function Home() {
                             <Heading textAlign={"center"} mb={4}>
                                 Moje posty
                             </Heading>
-                            <HelpList type={PostTypes.MINE} />
+                            <HelpList type={PostTypes.MINE} q={searchValue} />
                         </Flex>
                     </TabPanel>
                 </TabPanels>
             </Tabs>
             {/* <MadeWithHeart /> */}
+            <Box position="fixed" bottom="0" left="0" width={"100%"}>
+                <Footer />
+            </Box>
         </Container>
     );
 }

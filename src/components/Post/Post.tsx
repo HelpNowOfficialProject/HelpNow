@@ -27,6 +27,7 @@ import {
     DocumentData,
     getDoc,
     setDoc,
+    updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
@@ -70,12 +71,22 @@ export default function Post() {
             "acceptedPosts"
         )
     );
+
     const [isLoadingChangingStatus, setIsLoadingChangingStatus] =
         useState(false);
     const [authorName, setAuthorName] = useState("");
     const [post, setPost] = useState<IPost>();
+    const [phoneNumber, setPhoneNumber] = useState("");
+
+    const getPhoneNumber = async () => {
+        const phoneNumber = await getDoc(
+            doc(db, "posts", (value as any).id, "secret", "phoneNumber")
+        );
+        setPhoneNumber(phoneNumber?.data()?.phoneNumber || "");
+    };
 
     const handleValueChange = async () => {
+        console.log("handle value change");
         if (!value || !value.data()) return;
         setPost({
             ...((value as any).data() as unknown as IPost),
@@ -91,6 +102,16 @@ export default function Post() {
         );
         let { name, surname } = author.data() as any;
         setAuthorName(`${name} ${surname}`);
+
+        console.log(
+            "is mine",
+            (myPosts as any[]).find((e) => e.id === value.id)
+        );
+        if ((myPosts as any[]).find((e) => e.id === value.id)) {
+            await getPhoneNumber();
+        } else {
+            setPhoneNumber("");
+        }
     };
 
     const handleAccept = async () => {
@@ -118,6 +139,8 @@ export default function Post() {
             status: "success",
             isClosable: true,
         });
+
+        await getPhoneNumber();
         setIsLoadingChangingStatus(false);
         // navigate("/app");
     };
@@ -147,8 +170,13 @@ export default function Post() {
         return;
     };
 
-    const handleCompleted = () => {
-        console.log("mega");
+    const handleCompleted = async () => {
+        if (!post) return;
+        setIsLoadingChangingStatus(true);
+        await updateDoc(doc(db, "posts", (value as DocumentData).id), {
+            isCompleted: !post.isCompleted,
+        });
+        setIsLoadingChangingStatus(false);
     };
 
     const handleDelete = async () => {
@@ -169,7 +197,7 @@ export default function Post() {
         if (value) {
             handleValueChange();
         }
-    }, [value]);
+    }, [value, myPosts]);
 
     console.log(addressError);
     console.log(myAddress);
@@ -250,7 +278,6 @@ export default function Post() {
                 </Box>
                 {/* //TODO - Maybe map */}
                 {/* //TODO - Killometer indicator */}
-
                 <div
                     style={{
                         height: 400,
@@ -289,6 +316,18 @@ export default function Post() {
                     </MapContainer>
                 </div>
 
+                <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`https://www.google.com/maps/dir/?api=1&origin=${
+                        (myAddress as ILocation).latitude
+                    },${(myAddress as ILocation).longitude}&destination=${
+                        (post.address as ILocation).latitude
+                    }, ${(post.address as ILocation).longitude}`}
+                    style={{ marginTop: "3px", width: "100%" }}
+                >
+                    <Button  mt={4} width={"100%"}>Nawiguj do</Button>
+                </a>
                 <Flex justifyContent={"center"} gap={2} my={4}>
                     <Text>Odległość od Twojego adresu zamieszkania</Text>{" "}
                     <Badge
@@ -312,7 +351,6 @@ export default function Post() {
                         km
                     </Badge>
                 </Flex>
-
                 <Box mb={`15px`} mt={`20px`}>
                     <FormLabel>Stopień zagrożenia</FormLabel>
                     <Slider
@@ -359,7 +397,14 @@ export default function Post() {
                 {(myPosts as any[]).find((e) => e.id === post.uuid) && (
                     <Alert status="success" variant="left-accent" m={2} my={5}>
                         <AlertIcon />
-                        Zgłoszono chęć pomocy!
+                        <Flex flexDir={`column`}>
+                            <Box>Zgłoszono chęć pomocy! </Box>
+                            <Box>
+                                {phoneNumber
+                                    ? `Numer telefonu: ${phoneNumber}`
+                                    : ""}
+                            </Box>
+                        </Flex>
                     </Alert>
                 )}
                 {isLoadingChangingStatus ? (
@@ -372,7 +417,9 @@ export default function Post() {
                             colorScheme={`green`}
                             onClick={handleCompleted}
                         >
-                            Oznacz jako wykonany
+                            {post.isCompleted
+                                ? "Oznacz jako niewykonany"
+                                : "Oznacz jako wykonany"}
                         </Button>
                         <Button
                             className={`deletePostBtn`}

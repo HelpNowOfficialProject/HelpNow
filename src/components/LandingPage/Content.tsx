@@ -37,8 +37,8 @@ export default function Content() {
                             ?
                         </Heading>
                         <Text color={"gray.400"} fontSize={"lg"}>
-                            Jest to aplikacja służąca do szybkiej pomocy ludzią
-                            w twojej okolicy z problemami codziennego życia.
+                            Jest to aplikacja służąca do szybkiej pomocy ludziom
+                            w Twojej okolicy z problemami codziennego życia.
                             Wystarczy kilka kliknięć, żeby utworzyć prośbę o
                             pomoc. Najważniejsze zalety naszej aplikacji:
                         </Text>
@@ -54,7 +54,7 @@ export default function Content() {
                                 fontWeight={"bold"}
                                 borderBottom="1px,solid,white"
                             >
-                                Wystarczy połączenie z internetem, żeby urzywać
+                                Wystarczy połączenie z internetem, żeby używać
                                 aplikacji{" "}
                             </Text>
                         </Stack>
@@ -68,7 +68,7 @@ export default function Content() {
                                 rounded={"full"}
                             ></Flex>
                             <Text fontWeight={"bold"}>
-                                Szybkie działanie zarówno na komputerze jak i
+                                Szybkie działanie zarówno na komputerze, jak i
                                 telefonie
                             </Text>
                         </Stack>

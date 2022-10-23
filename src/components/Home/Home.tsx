@@ -41,7 +41,6 @@ export default function Home() {
                   Pomogę w
                 </Heading>
                 <HelpList type={PostTypes.DECLARED} q={searchValue} />
-                {/* <MyHelpList /> */}
               </Flex>
             </TabPanel>
             <TabPanel>

@@ -52,7 +52,7 @@ export default function AddHelpRequest() {
   const posts = collection(db, "posts");
   const navigate = useNavigate();
   const specialCharTag = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-  const specialCharOther = /[`#@$%^&*_+\=\[\]{};':\\|<>\/]/;
+  const specialCharOther = /[`#@$%^&_\=\[\]{}\\|<>\/]/;
   const cancelRef = useRef();
 
   const [markerPosition, setMarkerPosition] = useState<ILocation>({

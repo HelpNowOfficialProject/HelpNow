@@ -18,7 +18,7 @@ import {
 import axios from "axios";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, writeBatch } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillEye, AiFillEyeInvisible, AiFillPhone } from "react-icons/ai";
 import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
@@ -44,10 +44,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const [initialLocation, setInitialLocation] = useState<ILocation>({
-    latitude: 49.946357895803885,
-    longitude: 18.607068901955323,
-  });
   const [markerPosition, setMarkerPosition] = useState<ILocation>({
     latitude: 49.946357895803885,
     longitude: 18.607068901955323,
@@ -188,6 +184,13 @@ export default function Register() {
       });
   };
 
+  useEffect(() => {
+    getIPLocation().then((location) => {
+      setMarkerPosition(location);
+    });
+    locateMe();
+  }, []);
+
   return (
     <Container
       bgColor={`hsl(220deg 26% 18%)`}
@@ -288,7 +291,7 @@ export default function Register() {
         >
           <MapContainer
             // @ts-ignore
-            center={[initialLocation.latitude, initialLocation.longitude]}
+            center={[markerPosition.latitude, markerPosition.longitude]}
             zoom={13}
             scrollWheelZoom={true}
             style={{

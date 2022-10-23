@@ -185,8 +185,6 @@ export default function AddHelpRequest() {
       errorMessage = "Brakuje opisu!";
     } else if (description.length > 256) {
       errorMessage = "Opis nie może mieć więcej niż 256 znaków";
-    } else if (specialCharOther.test(description)) {
-      errorMessage = "Opis nie może zawierać znaków specjalnych";
     } else if (tags.length === 0) {
       errorMessage = "Brakuje tagów!";
     }

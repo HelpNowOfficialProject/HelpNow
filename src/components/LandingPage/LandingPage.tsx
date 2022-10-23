@@ -5,13 +5,13 @@ import Header from "./Header";
 import Navbar from "./NavBar";
 
 export default function LandingPage() {
-    return (
-        <>
-            <Navbar />
-            <Header />
-            <Content />
-            <Content2 />
-            <Footer />
-        </>
-    );
+  return (
+    <>
+      <Navbar />
+      <Header />
+      <Content />
+      <Content2 />
+      <Footer />
+    </>
+  );
 }

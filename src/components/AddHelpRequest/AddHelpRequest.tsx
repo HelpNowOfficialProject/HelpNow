@@ -3,6 +3,12 @@
 import {
   Alert,
   AlertDescription,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   AlertIcon,
   AlertTitle,
   Box,
@@ -28,7 +34,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
@@ -47,6 +53,7 @@ export default function AddHelpRequest() {
   const navigate = useNavigate();
   const specialCharTag = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
   const specialCharOther = /[`#@$%^&*_+\=\[\]{};':\\|<>\/]/;
+  const cancelRef = useRef();
 
   const [markerPosition, setMarkerPosition] = useState<ILocation>({
     latitude: 49.946357895803885,
@@ -65,6 +72,8 @@ export default function AddHelpRequest() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const [isVoluntary, setIsVoluntary] = useState(true);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentTag(e.target.value);
@@ -242,6 +251,17 @@ export default function AddHelpRequest() {
     });
   };
 
+  const onDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+  const onDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+  const goHome = () => {
+    onDialogClose();
+    navigate("/app");
+  };
+
   useEffect(() => {
     // getIPLocation().then((location) => {
     //   setMarkerPosition(location);
@@ -254,6 +274,34 @@ export default function AddHelpRequest() {
 
   return (
     <>
+      <AlertDialog
+        isOpen={isDialogOpen}
+        leastDestructiveRef={cancelRef as any}
+        onClose={onDialogClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Wróć
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Czy na pewno chcesz wrócić do strony głównej? Odrzuci to
+              niezapisane zmiany.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef as any} onClick={onDialogClose}>
+                Anuluj
+              </Button>
+              <Button colorScheme="red" onClick={goHome} ml={3}>
+                Wróć
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       <Container
         mt={`20px`}
         mb="20px"
@@ -387,10 +435,10 @@ export default function AddHelpRequest() {
             ></Switch>
           </Box>
           <Box display="flex" justifyContent={"space-between"}>
-            <Button onClick={handlePostAdd}>Wyślij</Button>
-            <Link to="/app">
-              <Button colorScheme={`red`}>Wróć</Button>
-            </Link>
+            <Button colorScheme={`red`} onClick={onDialogOpen}>
+              Wróć
+            </Button>
+            <Button onClick={handlePostAdd}>Dodaj post</Button>
           </Box>
         </FormControl>
       </Container>

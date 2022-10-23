@@ -228,8 +228,8 @@ export default function Post() {
           <Tooltip
             label={
               (post as IPost).isVoluntary
-                ? "Otrzymasz wynagrodzenie"
-                : "Charytatywna pomoc"
+                ? "Charytatywna pomoc"
+                : "Otrzymasz wynagrodzenie"
             }
           >
             <span>

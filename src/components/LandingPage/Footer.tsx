@@ -1,4 +1,3 @@
-import { Box, Container, Stack, Text, Link } from "@chakra-ui/react";
 import MadeWithHeart from "../MadeWithHeart/MadeWithHeart";
 
 export default function Footer() {

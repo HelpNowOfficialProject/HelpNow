@@ -3,8 +3,8 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
-  Link,
   Flex,
+  Link,
 } from "@chakra-ui/react";
 
 export default function MadeWithHeart() {

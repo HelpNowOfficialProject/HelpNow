@@ -1,15 +1,14 @@
 import {
-  Heading,
   Avatar,
   Box,
   Center,
-  Text,
-  Stack,
   Flex,
+  Heading,
   IconButton,
   Image,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
 
 export default function Content2() {
   return (

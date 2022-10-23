@@ -1,3 +1,4 @@
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import {
   collection,
   doc,
@@ -9,19 +10,18 @@ import {
   QuerySnapshot,
   where,
 } from "firebase/firestore";
+import { useEffect, useMemo, useState } from "react";
 import {
   useCollection,
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
 import app, { auth, db } from "../../firebase";
-import SmallPost from "../SmallPost/SmallPost";
 import { ILocation, IPost } from "../../types/post";
-import { Box, Container, Flex, Heading, Text } from "@chakra-ui/react";
-import LoadingPage from "../LoadingPage/LoadingPage";
-import ErrorPage from "../ErrorPage/ErrorPage";
 import PostTypes from "../../types/types";
-import { useEffect, useMemo, useState } from "react";
+import ErrorPage from "../ErrorPage/ErrorPage";
+import LoadingPage from "../LoadingPage/LoadingPage";
+import SmallPost from "../SmallPost/SmallPost";
 import calculateDistance from "../utils/calculateDistance";
 
 interface IHelpList {

@@ -29,7 +29,6 @@ import {
 import axios from "axios";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";

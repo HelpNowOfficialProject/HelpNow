@@ -33,7 +33,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { MapContainer } from "react-leaflet";
 import { Link, useNavigate } from "react-router-dom";
@@ -214,7 +214,16 @@ export default function AddHelpRequest() {
       isCompleted: false,
     };
 
-    await addDoc(posts, newPost);
+    const createdPost = await addDoc(posts, newPost);
+
+    const phoneNumber = await getDoc(
+      doc(db, "users", (auth.currentUser as any).uid, "address", "phoneNumber")
+    );
+
+    await setDoc(doc(db, "posts", createdPost.id, "secret", "phoneNumber"), {
+      uid: (auth.currentUser as any).uid,
+      phoneNumber: (phoneNumber?.data() as any).phoneNumber,
+    });
 
     setIsLoading(false);
 

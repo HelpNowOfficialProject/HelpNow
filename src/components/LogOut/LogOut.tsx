@@ -11,8 +11,6 @@ export default function LogOut() {
     doc(db, "users", (auth.currentUser as any).uid as string)
   );
 
-  console.log(auth.currentUser);
-
   const logUserOut = async () => {
     signOut(auth);
   };

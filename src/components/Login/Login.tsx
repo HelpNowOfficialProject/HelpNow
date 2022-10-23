@@ -1,4 +1,9 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
   Button,
   Container,
   Flex,
@@ -53,7 +58,6 @@ export default function Login() {
 
     signInWithEmailAndPassword(auth, email, password)
       .then((user) => {
-        console.log(user);
         navigate("/app");
       })
       .catch((err: any) => {
@@ -137,6 +141,14 @@ export default function Login() {
           </Link>
         </Flex>
       </Flex>
+
+      <Alert status="info" mt={4} rounded="xl">
+        <AlertIcon />
+        <Box>
+          <AlertTitle>Testowy użytkownik</AlertTitle>
+          <AlertDescription>user@example.com:password123</AlertDescription>
+        </Box>
+      </Alert>
     </Container>
   );
 }

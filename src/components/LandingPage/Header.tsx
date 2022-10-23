@@ -26,6 +26,7 @@ export default function Header() {
               <Highlight
                 query="Now"
                 styles={{
+                  mx: 1,
                   px: "6",
                   py: "1",
                   rounded: "full",
@@ -39,7 +40,7 @@ export default function Header() {
           </Heading>
           <Text color={"gray.500"} py={4}>
             Używaj tej aplikacji, żeby pomagać innym ludziom oraz otrzymywać
-            pomoc kiedy jej potrzebujesz. Zarejestruj się już dziś używając
+            pomoc, kiedy jej potrzebujesz. Zarejestruj się już dziś, używając
             przycisku niżej
           </Text>
           <Stack spacing={3} align={"center"} py={6}>
